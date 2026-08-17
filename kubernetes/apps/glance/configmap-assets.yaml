@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-assets
+  namespace: glance
+data:
+  # Key name is the filename once mounted, and must match the
+  # theme.custom-css-file path in glance-config (/assets/user.css).
+  user.css: |
+    /* Nord — nordtheme.com
+       Glance derives backgrounds, separators, borders and popovers from the
+       --bgh/--bgs/--bgl triplet, so setting the Polar Night base recolours the
+       whole surface. Text hue follows --bgh automatically. Values are hsl()
+       calls, not bare numbers — bare numbers parse as an invalid value and the
+       declaration is dropped.
+       This file loads after glance's own theme block, so these win. */
+    :root {
+      /* nord0 #2E3440 */
+      --bgh: 220;
+      --bgs: 16%;
+      --bgl: 22%;
+
+      /* Text lightness and saturation are multipliers on the derived values.
+         1.1 puts highlight text at ~94% (nord6), 1.75 lifts text saturation
+         from the background's 16% to Snow Storm's ~28% so it reads tinted
+         rather than grey. */
+      --cm: 1.1;
+      --tsm: 1.75;
+
+      /* Accent. Glance paints every title, link and border with this one
+         variable, so it decides how colourful the page looks. Frost sits 27deg
+         from the background hue, which is why the page reads close to
+         monochrome; the alternatives below trade that for more separation.
+         Keep exactly one active — with two, the lower line silently wins. */
+      --color-primary: hsl(193, 43%, 67%);      /* nord8  frost  #88C0D0  canonical Nord */
+      /* --color-primary: hsl(311, 20%, 63%); */  /* nord15 purple #B48EAD  softer, distinctive */
+      /* --color-primary: hsl(14, 51%, 63%); */   /* nord12 orange #D08770  vivid, near the red */
+
+      --color-positive: hsl(92, 28%, 65%);   /* nord14 #A3BE8C */
+      --color-negative: hsl(354, 42%, 56%);  /* nord11 #BF616A */
+
+      /* Item metadata (time, points, comments, source) inherits the body
+         colour, which derives to ~64% lightness. Lifted toward Snow Storm.
+         --ths is glance's own "hue, saturation" pair, so these stay tinted
+         with the background hue instead of going flat grey. */
+      --color-text-base: hsl(var(--ths), 76%);
+      --color-text-subdue: hsl(var(--ths), 58%);
+    }
+
+    /* Headlines are <a class="color-primary-if-not-visited">, so by default
+       they take the accent colour. Point them at the brightest text tier
+       (~94% lightness, near enough nord6 #ECEFF4) to read as white. The
+       accent still shows on the ↗ arrows, the active tab underline and
+       widget borders. */
+    .color-primary-if-not-visited:not(:visited) {
+      color: var(--color-text-highlight);
+    }

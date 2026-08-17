@@ -1,0 +1,265 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: glance
+data:
+  glance.yml: |
+    server:
+      assets-path: /app/assets
+
+    theme:
+      # Assets are browser-cached; CSS changes need a hard refresh (Ctrl+F5).
+      custom-css-file: /assets/user.css
+
+    pages:
+      - $include: home.yml
+
+  home.yml: |
+    - name: Home
+      columns:
+
+        # =====================================================================
+        # LEFT (small) — feeds, skimmed top to bottom
+        # =====================================================================
+        - size: small
+          widgets:
+            - type: calendar
+              first-day-of-week: sunday
+
+            # --- Bookmarks — dormant until services land ----------------------
+            # Reserved as the launcher for self-hosted services. Kept commented
+            # rather than filled with public-web links: an empty bookmarks
+            # widget renders as a blank box, and hosts that do not resolve yet
+            # are worse than no link at all. Uncomment the widget and an entry
+            # once that service has an Ingress. Host pattern: <service>.homelab,
+            # as in dashboard.homelab. Entries below are the roadmap, not what
+            # is deployed.
+            # - type: bookmarks
+            #   groups:
+            #     - title: Services
+            #       links:
+            #         - title: Gitea
+            #           url: http://git.homelab/
+            #         - title: Immich
+            #           url: http://photos.homelab/
+            #         - title: Vaultwarden
+            #           url: http://vault.homelab/
+            #     - title: Platform
+            #       links:
+            #         - title: Argo CD
+            #           url: http://argocd.homelab/
+            #         - title: Grafana
+            #           url: http://grafana.homelab/
+
+            # --- Self-hosting & practitioner blogs ---------------------------
+            - type: rss
+              title: Self-hosting & Practitioners
+              limit: 10
+              collapse-after: 3
+              cache: 12h
+              feeds:
+                - url: https://selfh.st/rss/
+                  title: selfh.st
+                - url: https://iximiuz.com/feed.atom
+                  title: iximiuz labs
+                - url: https://rawkode.academy/api/feeds/all.xml
+                  title: rawkode academy
+                - url: https://xeiaso.net/blog.rss
+                  title: Xe Iaso
+                - url: https://cloudnativenow.com/feed/
+                  title: Cloud Native Now
+                - url: https://itnext.io/feed
+                  title: ITNext
+                - url: https://blog.container-solutions.com/rss.xml
+                  title: Container Solutions
+
+            # --- Kubernetes / CNCF — the core signal -------------------------
+            - type: rss
+              title: Kubernetes & CNCF
+              style: vertical-list
+              limit: 15
+              collapse-after: 3
+              cache: 3h
+              feeds:
+                - url: https://kubernetes.io/feed.xml
+                  title: Kubernetes Blog
+                - url: https://www.cncf.io/feed/
+                  title: CNCF
+                - url: https://blog.argoproj.io/feed
+                  title: Argo Project
+                - url: https://grafana.com/blog/index.xml
+                  title: Grafana Labs
+
+            # --- Security — CKS-aligned --------------------------------------
+            - type: rss
+              title: Security
+              style: vertical-list
+              limit: 15
+              collapse-after: 3
+              cache: 3h
+              feeds:
+                - url: https://sysdig.com/feed/
+                  title: Sysdig
+                - url: https://blog.aquasec.com/rss.xml
+                  title: Aqua Security
+                - url: https://snyk.io/blog/feed/
+                  title: Snyk
+                - url: https://falco.org/feed.xml
+                  title: Falco
+                - url: https://blog.gitguardian.com/rss/
+                  title: GitGuardian
+
+            # --- Work-adjacent — Azure DevOps, OpenShift, cloud --------------
+            - type: rss
+              title: Platform & Cloud
+              style: vertical-list
+              limit: 15
+              collapse-after: 3
+              cache: 6h
+              feeds:
+                - url: https://devblogs.microsoft.com/devops/feed/
+                  title: Azure DevOps
+                - url: https://www.redhat.com/en/rss/blog
+                  title: Red Hat / OpenShift
+                - url: https://www.hashicorp.com/blog/feed.xml
+                  title: HashiCorp
+                - url: https://aws.amazon.com/blogs/devops/feed/
+                  title: AWS DevOps
+                - url: https://blog.cloudflare.com/rss/
+                  title: Cloudflare
+
+        # =====================================================================
+        # CENTRE (full) — search, aggregators, video
+        # =====================================================================
+        - size: full
+          widgets:
+            - type: search
+              search-engine: duckduckgo
+              bangs:
+                - title: YouTube
+                  shortcut: "!yt"
+                  url: https://www.youtube.com/results?search_query={QUERY}
+                - title: X
+                  shortcut: "!x"
+                  url: https://x.com/search?q={QUERY}
+                - title: Reddit
+                  shortcut: "!r"
+                  url: https://www.reddit.com/search/?q={QUERY}
+                - title: r/kubernetes
+                  shortcut: "!k8s"
+                  url: https://www.reddit.com/r/kubernetes/search/?q={QUERY}&restrict_sr=1
+
+            - type: group
+              widgets:
+                - type: hacker-news
+                - type: lobsters
+
+            - type: videos
+              title: DevOps Channels
+              channels:
+                - UCfz8x0lVzJpb_dgWm9kPVrw # DevOps&AI ToolKit
+                - UCrber_mFvp_FEF7D9u8PDEA # RawKode Academy
+                - UCFe9-V_rN9nLqVNiI8Yof3w # ThatDevOpsGuy
+                - UCDAck-gFPTrgTx_qp59-bQA # MischaVanDenBurg
+                - UCeLvlbC754U6FyFQbKc0UnQ # AntonPutra
+                - UCOk-gHyjcWZNj3Br4oxwh0A # TechnoTim
+                - UCZNhwA1B5YqiY1nLzmM0ZRg # Christian Lempa
+
+            - type: videos
+              title: General & Engineering
+              channels:
+                - UCtZO3K2p8mqFwiKWb9k7fXA # TechAlter
+                - UCRG_N2uO405WO4P3Ruef9NA # The Friday Checkout
+                - UCR-DXc1voovS8nhAvccRZhg # Jeff Geerling
+                - UCsBjURrPoezykLs9EqgamOA # Fireship
+                - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+                - UCNu8-f_GI4n0vLWG4Gj3Z5A # BnSamy
+                - UC4QZ_LsYcvcq7qOsOhpAX4A # ColdFusion
+                - UC_ML5xP23TOWKUcc-oAE_Eg # HusseinNasser
+                - UCUyeluBRhGPCW4rPe_UvBZQ # PrimeTime
+                - UCPcuGnzrIIa-wg3yw-jRJbQ # MrLimboo
+                - UCd3dNckv1Za2coSaHGHl5aA # TJ
+
+            - type: group
+              widgets:
+                - type: reddit
+                  subreddit: technology
+                  show-thumbnails: true
+                - type: reddit
+                  subreddit: selfhosted
+                  show-thumbnails: true
+
+        # =====================================================================
+        # RIGHT (small) — personal, releases, community, long reads
+        # =====================================================================
+        - size: small
+          widgets:
+            - type: to-do
+
+            - type: weather
+              location: Giza, Egypt
+              units: metric   # alternatively "imperial"
+              hour-format: 12h # alternatively "24h"
+
+            # --- Releases — native widget, not RSS ---------------------------
+            # Covers the stack running today plus things on the roadmap, so a
+            # listed repo is not evidence it is deployed. Token is read from the
+            # mounted secret at /run/secrets/github_token — never inline it.
+            - type: releases
+              title: My Stack
+              cache: 6h
+              collapse-after: 3
+              token: ${secret:github_token}
+              repositories:
+                - stablyai/orca
+                - go-gitea/gitea
+                - immich-app/immich
+                - syncthing/syncthing
+                - k3s-io/k3s
+                - argoproj/argo-cd
+                - traefik/traefik
+                - metallb/metallb
+                - cloudflare/cloudflared
+                - dani-garcia/vaultwarden
+                - glanceapp/glance
+                - prometheus-operator/kube-prometheus-stack
+                - grafana/loki
+                - aquasecurity/trivy
+                - kubernetes/kubernetes
+
+            # --- Community — native widgets, less noise than RSS -------------
+            - type: reddit
+              subreddit: kubernetes
+              style: vertical-list
+              limit: 8
+              collapse-after: 3
+              sort-by: top
+              top-period: week
+
+            - type: reddit
+              subreddit: devops
+              style: vertical-list
+              limit: 8
+              collapse-after: 3
+              sort-by: top
+              top-period: week
+
+            # --- Deep reads — slow feeds, high value -------------------------
+            - type: rss
+              title: Deep Reads
+              style: detailed-list
+              limit: 10
+              collapse-after: 3
+              cache: 12h
+              feeds:
+                - url: https://lwn.net/headlines/newrss
+                  title: LWN
+                - url: https://jvns.ca/atom.xml
+                  title: Julia Evans
+                - url: https://www.brendangregg.com/blog/rss.xml
+                  title: Brendan Gregg
+                - url: https://netflixtechblog.com/feed
+                  title: Netflix Tech
+                - url: https://www.lastweekinaws.com/feed/
+                  title: Last Week in AWS
