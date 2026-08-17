@@ -1,0 +1,25 @@
+# Matches on filename only — a Secret manifest named something else is not
+# caught here. Encrypted forms are re-included by the negations below.
+*secret*.yaml
+*secret*.yml
+!*sealed-secret*.yaml
+!*.sops.yaml
+!*secret*.example.yaml
+
+# must stay after the negations above
+*sealed-secrets-key*
+*.backup.yaml
+
+# keys and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+kubeconfig
+*.kubeconfig
+
+# editor / os
+.DS_Store
+*.swp
+*.log
