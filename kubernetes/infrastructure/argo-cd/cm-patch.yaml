@@ -1,0 +1,15 @@
+---
+# Strategic merge patch against the argocd-cm shipped in install.yaml.
+# so it can identify what it's managing
+# No `namespace:` here on purpose. Upstream install.yaml ships its resources
+# with no namespace field, expecting `kubectl apply -n argocd`. Kustomize
+# matches patches against resources as loaded, before the namespace
+# transformer runs, so naming a namespace here makes the patch match nothing:
+#   no matches for Id ConfigMap.v1.[noGrp]/argocd-cm.argocd
+# The namespace comes from the `namespace: argocd` line in kustomization.yaml.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  application.resourceTrackingMethod: annotation

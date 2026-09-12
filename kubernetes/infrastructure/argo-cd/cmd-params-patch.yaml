@@ -1,0 +1,24 @@
+---
+# Strategic merge patch against the argocd-cmd-params-cm in install.yaml.
+#
+# server.insecure makes argocd-server serve plain HTTP instead of TLS with a
+# 307 redirect. Both Service ports 80 and 443 target container port 8080, so
+# an HTTP ingress otherwise reaches a TLS-mode server, gets redirected to
+# https, and the redirect loops forever because the ingress backend is still
+# plaintext on the way back in.
+#
+# TLS is not abandoned, it moves to Traefik, which is the only hop facing the
+# LAN. Pairs with ingress.yaml, which targets port 80 and only works because
+# of this key.
+# No `namespace:` here on purpose. Upstream install.yaml ships its resources
+# with no namespace field, expecting `kubectl apply -n argocd`. Kustomize
+# matches patches against resources as loaded, before the namespace
+# transformer runs, so naming a namespace here makes the patch match nothing:
+#   no matches for Id ConfigMap.v1.[noGrp]/argocd-cm.argocd
+# The namespace comes from the `namespace: argocd` line in kustomization.yaml.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+data:
+  server.insecure: "true"

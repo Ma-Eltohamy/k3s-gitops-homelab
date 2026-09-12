@@ -1,0 +1,37 @@
+---
+# The only object applied by hand after the Argo CD overlay itself:
+#
+#   kubectl apply -n argocd -f bootstrap/app-of-apps.yaml
+#
+# Its only job is to sync a directory of other Applications, so adding an app
+# becomes a commit instead of a kubectl command. This is the app-of-apps
+# pattern, and the property worth protecting is that the manual step list stops
+# growing: four commands to rebuild, whether the cluster runs one app or forty.
+#
+# destination.namespace is argocd because the objects this creates ARE
+# Applications, and Argo CD only reads them from its own namespace.
+#
+# prune is off, so deleting a file from kubernetes/argocd-applications/ leaves
+# that Application running. Turn it on once the layout is trusted, and removal
+# from git becomes removal from the cluster.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Ma-Eltohamy/k3s-homelab-gitops.git
+    targetRevision: main
+    path: kubernetes/argocd-applications
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false

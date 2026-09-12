@@ -1,0 +1,31 @@
+---
+# Argo CD managing its own install, from the same overlay that bootstraps it
+# by hand. One artifact, two consumers, so there is no second copy to drift.
+#
+# Deliberately NO syncPolicy.automated: a bad sync here can remove the
+# repo-server mid-render and deadlock, with no working Argo CD to fix it from.
+# The escape hatch is that `kubectl apply -k kubernetes/infrastructure/argo-cd
+# --server-side` works regardless of what state Argo CD is in.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-cd
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Ma-Eltohamy/k3s-homelab-gitops.git
+    targetRevision: main
+    path: kubernetes/infrastructure/argo-cd
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  syncPolicy:
+    syncOptions:
+      # Same reason as --server-side on the bootstrap command: the Application
+      # CRD exceeds the 262144-byte annotation cap that client-side apply needs
+      # for its last-applied-configuration copy.
+      - ServerSideApply=true
