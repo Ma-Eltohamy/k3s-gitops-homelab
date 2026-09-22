@@ -23,3 +23,6 @@ kubeconfig
 .DS_Store
 *.swp
 *.log
+
+# vault
+.vault
