@@ -5,7 +5,7 @@ metadata:
   name: glance
   namespace: argocd
 spec:
-  project: default
+  project: k3s-homelab-project
 
   source:
     repoURL: https://github.com/Ma-Eltohamy/k3s-homelab-gitops.git
@@ -19,3 +19,5 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+    automated:
+      selfHeal: true
