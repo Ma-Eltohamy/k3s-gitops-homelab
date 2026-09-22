@@ -15,7 +15,7 @@ spec:
   project: k3s-homelab-project
 
   source:
-    repoURL: https://github.com/Ma-Eltohamy/k3s-homelab-gitops.git
+    repoURL: https://github.com/Ma-Eltohamy/k3s-gitops-homelab.git
     targetRevision: main
     path: kubernetes/infrastructure/argo-cd
 
