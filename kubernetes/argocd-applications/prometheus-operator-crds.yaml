@@ -4,7 +4,7 @@ metadata:
   name: prometheus-operator-crds
   namespace: argocd
 spec:
-  project: monitoring
+  project: k3s-homelab-project
   source:
     repoURL: https://github.com/prometheus-operator/prometheus-operator.git
     targetRevision: v0.94.1 # not main - main is running target, every commit would change what's running at cluster.
