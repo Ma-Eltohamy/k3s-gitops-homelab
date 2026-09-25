@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana-ingress
-  namespace: monitoring
+  namespace: {{ .Release.Namespace }}
 spec:
   rules:
   - host: "grafana.homelab"
@@ -12,6 +12,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: prometheus-stack-grafana
+            name: {{ .Release.Name }}-grafana
             port:
               number: 80
